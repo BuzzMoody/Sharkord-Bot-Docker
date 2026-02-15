@@ -1,6 +1,6 @@
 # Sharkord Bot Docker Deployment
 
-This guide explains how to deploy the Sharkord Bot using Docker. The image is built on `php:8.5-cli-alpine` and includes all necessary dependencies such as Composer, Git, and the required PHP extensions.
+This guide explains how to deploy the [Sharkord Bot](https://github.com/BuzzMoody/Sharkord-Bot) using Docker. The image is built on `php:8.5-cli-alpine` and includes all necessary dependencies such as Composer, Git, and the required PHP extensions.
 
 ---
 
@@ -12,7 +12,7 @@ The bot requires the following environment variables to authenticate and connect
 | :--- | :--- | :--- |
 | `CHAT_USERNAME` | The bot's identity/username | `SharkordBot` |
 | `CHAT_PASSWORD` | The bot's account password | `your_secret_password` |
-| `CHAT_HOST` | The server hostname | `the.boyz.au` |
+| `CHAT_HOST` | The server hostname | `your.domain.tld` |
 
 ---
 
