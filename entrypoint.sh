@@ -1,19 +1,27 @@
 #!/bin/bash
 set -e
 
-# Default to your repository if none is specified in environment variables
+# Default to your repository if none is specified
 REPO_URL="${REPO_URL:-https://github.com/BuzzMoody/Sharkord-Bot.git}"
 
-# Check if the directory is empty or doesn't contain the core logic
+# Check if the core logic (Main.php) is missing
 if [ ! -f "Main.php" ]; then
-    echo "[DOCKER] Target directory is empty. Cloning repository: $REPO_URL"
-    # Clone into a temporary folder to avoid "directory not empty" errors, then move
-    git clone "$REPO_URL" .
+    echo "[DOCKER] Main.php not found. Fetching source from: $REPO_URL"
+    
+    # 1. Clone into a temporary folder
+    git clone "$REPO_URL" /tmp/repo_clone
+    
+    # 2. Move everything (including hidden .git files) to the current dir
+    cp -rn /tmp/repo_clone/. .
+    
+    # 3. Clean up the temp folder
+    rm -rf /tmp/repo_clone
+    echo "[DOCKER] Clone complete."
 else
     echo "[DOCKER] Source code already exists. Skipping clone."
 fi
 
-# Ensure Composer dependencies are installed so namespaces work
+# Ensure Composer dependencies are installed
 if [ ! -d "vendor" ]; then
     echo "[DOCKER] Installing Composer dependencies..."
     composer install --no-interaction --optimize-autoloader
@@ -22,6 +30,5 @@ else
     composer dump-autoload --optimize
 fi
 
-# Start the bot using the Main.php entry point
 echo "[DOCKER] Starting Sharkord Bot..."
 exec php Main.php
