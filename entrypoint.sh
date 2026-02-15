@@ -1,27 +1,38 @@
 #!/bin/bash
 set -e
 
-# Default to your repository if none is specified
 REPO_URL="${REPO_URL:-https://github.com/BuzzMoody/Sharkord-Bot.git}"
 
-# Check if the core logic (Main.php) is missing
+# 1. Check if we need to pull the code
 if [ ! -f "Main.php" ]; then
     echo "[DOCKER] Main.php not found. Fetching source from: $REPO_URL"
     
-    # 1. Clone into a temporary folder
+    # Clean up any partial previous attempts
+    rm -rf /tmp/repo_clone
+    
+    # Clone the repo
     git clone "$REPO_URL" /tmp/repo_clone
     
-    # 2. Move everything (including hidden .git files) to the current dir
-    cp -rn /tmp/repo_clone/. .
+    # Move everything from the temp folder to the current working directory (/app)
+    # Using 'cp -a' to preserve permissions and hidden files like .git
+    cp -a /tmp/repo_clone/. .
     
-    # 3. Clean up the temp folder
+    # Clean up
     rm -rf /tmp/repo_clone
-    echo "[DOCKER] Clone complete."
+    echo "[DOCKER] Files moved to /app successfully."
 else
-    echo "[DOCKER] Source code already exists. Skipping clone."
+    echo "[DOCKER] Source code already exists in /app."
 fi
 
-# Ensure Composer dependencies are installed
+# 2. Verify composer.json exists before running composer
+if [ ! -f "composer.json" ]; then
+    echo "[ERROR] composer.json not found in $(pwd)!"
+    echo "[DEBUG] Current directory contents:"
+    ls -la
+    exit 1
+fi
+
+# 3. Handle Dependencies
 if [ ! -d "vendor" ]; then
     echo "[DOCKER] Installing Composer dependencies..."
     composer install --no-interaction --optimize-autoloader
