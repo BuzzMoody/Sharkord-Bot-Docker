@@ -77,5 +77,5 @@ docker build -t sharkord-bot:latest .
 
 1. **Authentication**: The bot logs in via the provided host to acquire a JWT token.
 2. **WebSocket Handshake**: It establishes a JSON-RPC connection using the acquired token.
-3. **Caching**: On a successful join, it caches all users and channels into the `Sharkord\\Models` namespace.
+3. **Caching**: On a successful join, it caches all users and channels into the `Sharkord\Models` namespace.
 4. **Event Loop**: It remains active, listening for `!ping` commands and responding via the `Message` model's `reply()` method.
