@@ -1,15 +1,19 @@
 #!/bin/bash
 set -e
 
-# If a REPO_URL environment variable is provided, clone the repo
-# Otherwise, assume the code was copied into the image or mounted
-if [ -n "$REPO_URL" ]; then
-    echo "[DOCKER] Cloning repository: $REPO_URL"
+# Default to your repository if none is specified in environment variables
+REPO_URL="${REPO_URL:-https://github.com/BuzzMoody/Sharkord-Bot.git}"
+
+# Check if the directory is empty or doesn't contain the core logic
+if [ ! -f "Main.php" ]; then
+    echo "[DOCKER] Target directory is empty. Cloning repository: $REPO_URL"
+    # Clone into a temporary folder to avoid "directory not empty" errors, then move
     git clone "$REPO_URL" .
+else
+    echo "[DOCKER] Source code already exists. Skipping clone."
 fi
 
-# Ensure Composer dependencies are installed
-# This is required for the 'Sharkord' and 'Models' namespaces to work
+# Ensure Composer dependencies are installed so namespaces work
 if [ ! -d "vendor" ]; then
     echo "[DOCKER] Installing Composer dependencies..."
     composer install --no-interaction --optimize-autoloader
@@ -18,7 +22,6 @@ else
     composer dump-autoload --optimize
 fi
 
-# Start the bot
-# This executes the entry point defined in your project
+# Start the bot using the Main.php entry point
 echo "[DOCKER] Starting Sharkord Bot..."
 exec php Main.php
