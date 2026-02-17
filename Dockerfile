@@ -1,32 +1,24 @@
-# Use the requested PHP 8.5 CLI Alpine image
+# Using PHP 8.5 as requested (Note: If 8.5 is not released yet, switch to 8.4)
 FROM php:8.5-cli-alpine
 
 # Install system dependencies
-# libzip-dev and zip are required for the PHP zip extension
-# git, unzip, and bash are required for Composer and repo management
-RUN apk add --no-cache \
-    bash \
-    git \
-    unzip \
-    libzip-dev \
-    zip
+# - git/unzip: Required for Composer
+# - tzdata: Required for Timezone configuration
+# - bash: For our entrypoint script
+RUN apk add --no-cache git unzip tzdata bash
 
-# Install PHP extensions
-# 'zip' is for Composer; 'pcntl' allows the ReactPHP loop to handle system signals
-RUN docker-php-ext-install zip pcntl
+# Install PHP Extensions required by ReactPHP/Ratchet
+RUN docker-php-ext-install pcntl sockets bcmath
 
-# Install Composer from the official image
+# Get Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
-# Copy the project files (if building locally)
-COPY . .
-
-# Copy and prepare the entrypoint script
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+# Copy the entrypoint script into the container
+COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Run the entrypoint script
+# Set the entrypoint to our script
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
