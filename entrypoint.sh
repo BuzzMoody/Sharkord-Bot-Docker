@@ -11,7 +11,14 @@ fi
 # Since the volume is persistent, we check if we already installed the bot
 if [ ! -d "vendor" ]; then
     echo "First run detected. Installing Sharkord Framework..."
-    composer require buzzmoody/sharkordbot --no-interaction --prefer-dist
+    
+    # Check for DEV environment variable
+    if [ "$DEV" = "true" ]; then
+        echo "DEV mode enabled. Installing dev branch..."
+        composer require buzzmoody/sharkordbot:dev-dev --no-interaction --prefer-dist
+    else
+        composer require buzzmoody/sharkordbot --no-interaction --prefer-dist
+    fi
 else
     echo "Dependencies found. Checking for updates..."
     # Optional: Uncomment the next line if you want to auto-update every time
