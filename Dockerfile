@@ -20,7 +20,7 @@ RUN addgroup -g 1000 appgroup && \
 ENV TZ=Australia/Melbourne
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
-    && echo $TZ > /etc/timezone
+    && echo $TZ > /etc/timezone \
 	&& echo "date.timezone=${TZ}" > /usr/local/etc/php/conf.d/timezone.ini
 
 # 4. Get Composer
