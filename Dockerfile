@@ -16,6 +16,11 @@ RUN docker-php-ext-install pcntl bcmath
 # We create them with ID 1000 as a default starting point
 RUN addgroup -g 1000 appgroup && \
     adduser -u 1000 -G appgroup -D appuser
+	
+ENV TZ=Australia/Melbourne
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone
 
 # 4. Get Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

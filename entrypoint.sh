@@ -15,14 +15,7 @@ if [ "$(id -u)" = '0' ]; then
     chown -R appuser:appgroup /app
 fi
 
-# --- 2. Configure Timezone ---
-if [ -n "$TZ" ]; then
-    echo "Setting timezone to $TZ..."
-    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
-    echo $TZ > /etc/timezone
-fi
-
-# --- 3. Check dependencies ---
+# --- 2. Check dependencies ---
 cd /app
 
 if [ ! -d "vendor" ]; then
