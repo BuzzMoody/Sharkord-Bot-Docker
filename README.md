@@ -31,7 +31,7 @@ Use this method for a quick, single-container deployment.
 docker run -d \
 	--name sharkord-bot \
 	--restart always \
-	-e TZ="Australia/Melbourne" \
+	-e TZ=Australia/Melbourne \
     -e CHAT_USERNAME=USERNAME \
     -e CHAT_PASSWORD=PASSWORD \
     -e CHAT_HOST=your.domain.tld \
@@ -57,7 +57,7 @@ services:
       - CHAT_USERNAME=SharkordBot
       - CHAT_PASSWORD=your_secret_password
       - CHAT_HOST=your.domain.tld
-	  - TZ=Australia/Melbourne
+      - TZ=Australia/Melbourne
     volumes:
       - /local/directory:/app
 ```
