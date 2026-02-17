@@ -1,24 +1,34 @@
-# Using PHP 8.5 as requested (Note: If 8.5 is not released yet, switch to 8.4)
+# Using PHP 8.5 (Fallback to 8.4 if 8.5 is not yet available)
 FROM php:8.5-cli-alpine
 
-# Install system dependencies
+# 1. Install system dependencies
 # - git/unzip: Required for Composer
 # - tzdata: Required for Timezone configuration
 # - bash: For our entrypoint script
-RUN apk add --no-cache git unzip tzdata bash
+# - shadow: Provides usermod/groupmod for Alpine
+# - su-exec: Alpine's lightweight 'gosu' alternative
+RUN apk add --no-cache git unzip tzdata bash shadow su-exec
 
-# Install PHP Extensions required by ReactPHP/Ratchet
+# 2. Install PHP Extensions
 RUN docker-php-ext-install pcntl bcmath
 
-# Get Composer
+# 3. Create the generic user and group
+# We create them with ID 1000 as a default starting point
+RUN addgroup -g 1000 appgroup && \
+    adduser -u 1000 -G appgroup -D appuser
+
+# 4. Get Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
+# 5. Set working directory
 WORKDIR /app
 
-# Copy the entrypoint script into the container
+# 6. Copy the entrypoint script
 COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Set the entrypoint to our script
+# Ensure the app directory exists and is owned by our user
+RUN chown appuser:appgroup /app
+
+# 7. Set the entrypoint (Container starts as root to allow ID re-mapping)
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
