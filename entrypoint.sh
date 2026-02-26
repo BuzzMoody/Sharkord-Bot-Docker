@@ -24,10 +24,10 @@ if [ ! -d "vendor" ]; then
     if [ "$DEV" = "true" ]; then
         echo "DEV mode enabled. Installing dev branch..."
         # Swapped gosu for su-exec
-        su-exec appuser composer require buzzmoody/sharkordbot:dev-dev --no-interaction --prefer-dist
+        su-exec appuser composer require buzzmoody/sharkordphp:dev-dev --no-interaction --prefer-dist
     else
         # Swapped gosu for su-exec
-        su-exec appuser composer require buzzmoody/sharkordbot --no-interaction --prefer-dist
+        su-exec appuser composer require buzzmoody/sharkordphp --no-interaction --prefer-dist
     fi
 else
     echo "Dependencies found. Checking for updates..."
